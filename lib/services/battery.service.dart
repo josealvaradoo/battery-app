@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
 import 'package:flutter_client_sse/flutter_client_sse.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class BatteryService {
   String apiUrl = "${dotenv.env['API_URL']!}/status";
 
+  // Get the battery value from the server through a GET request.
   Future<Battery> getBatteryLevel() async {
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -28,31 +30,31 @@ class BatteryService {
     }
   }
 
+  // Subscribe to a Server Side Event stream and get the battery level
+  // from the server. First the cached value and then the live value.
   Future<void> getBatteryLevelStream(callback) async {
     Battery battery;
 
-    try {
-      SSEClient.subscribeToSSE(
-          method: SSERequestType.GET,
-          url: "$apiUrl/stream",
-          header: {
-            "Accept": "text/event-stream",
-            "Cache-Control": "no-cache",
-          }).listen(
-        (event) {
-          final json = jsonDecode(event.data.toString());
+    // Suibscribe to a Server Side Event stream and listen for events
+    SSEClient.subscribeToSSE(
+        method: SSERequestType.GET,
+        url: "$apiUrl/stream",
+        header: {
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+        }).listen((event) {
+      final json = jsonDecode(event.data.toString());
 
-          if (json["data"] != null) {
-            battery = Battery.fromJson(json["data"]);
-            callback(battery, json["is_cached"]);
-          }
-        },
-      ).onError((error) {
-        callback(Battery(level: 0, isCharging: false), false);
-        print("Error: $error");
-      });
-    } catch (e) {
-      print("ERROR Getting Battery Level: ${e.toString()}");
-    }
+      if (json["data"] != null) {
+        battery = Battery.fromJson(json["data"]);
+        callback(battery, json["is_cached"]);
+      }
+    }, onDone: () {
+      print("--UNSUBSCRIBING FROM SSE--");
+      SSEClient.unsubscribeFromSSE();
+    }, onError: (error) {
+      SSEClient.unsubscribeFromSSE();
+      callback(Battery(level: 0, isCharging: false), false);
+    });
   }
 }
