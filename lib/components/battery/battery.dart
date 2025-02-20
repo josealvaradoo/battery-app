@@ -10,9 +10,10 @@ const Map<String, Color> colors = {
 };
 
 class BatteryWidget extends StatefulWidget {
-  int level;
-  bool isEmpty;
-  BatteryWidget({super.key, this.level = 0, this.isEmpty = false}) : super();
+  final int level;
+  final bool isEmpty;
+  const BatteryWidget({super.key, required this.level, this.isEmpty = false})
+      : super();
 
   @override
   BatteryState createState() => BatteryState();
