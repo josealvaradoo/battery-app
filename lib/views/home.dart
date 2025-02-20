@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:battery/models/battery.dart';
 import 'package:battery/components/battery/battery.dart';
 import 'package:battery/services/battery.service.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:lottie/lottie.dart';
 
 class HomeView extends StatefulWidget {
@@ -51,8 +52,16 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-       leading: IconButton(icon: Icon(IconData.), onPressed: () => Navigator.pop(context)),
-        ),
+        leading: Container(),
+        actions: [
+          IconButton(
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedLogout02,
+                color: Colors.black,
+              ),
+              onPressed: () => Navigator.pop(context)),
+        ],
+      ),
       body: Center(
           child: RefreshIndicator(
               onRefresh: _onRefresh,
