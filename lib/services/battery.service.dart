@@ -50,7 +50,6 @@ class BatteryService {
         callback(battery, json["is_cached"]);
       }
     }, onDone: () {
-      print("--UNSUBSCRIBING FROM SSE--");
       SSEClient.unsubscribeFromSSE();
     }, onError: (error) {
       SSEClient.unsubscribeFromSSE();
