@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
+import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/models/battery.dart';
 import 'package:battery/components/battery/battery.dart';
@@ -96,15 +98,28 @@ class _HomeViewState extends State<HomeView> {
     final double leftPosition = (MediaQuery.of(context).size.width - 200) / 2;
 
     return Scaffold(
+      backgroundColor: const Color(EverforestTheme.deepSlate),
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: Container(),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.black,
+          statusBarBrightness: Brightness.light,
+        ),
         actions: [
-          IconButton(
-              icon: const HugeIcon(
-                icon: HugeIcons.strokeRoundedLogout02,
-                color: Colors.black,
-              ),
-              onPressed: _onLogout),
+          Container(
+            margin: const EdgeInsets.only(right: 16.0),
+            decoration: BoxDecoration(
+              color: const Color(EverforestTheme.pineGreen),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: IconButton(
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedLogout02,
+                  color: Colors.white,
+                ),
+                onPressed: _onLogout),
+          )
         ],
       ),
       body: Center(
@@ -116,16 +131,36 @@ class _HomeViewState extends State<HomeView> {
                       bottom: 50,
                       left: leftPosition,
                       child: _isLoading
-                          ? Lottie.asset('assets/lottie/loader.json',
-                              repeat: true, height: 200, fit: BoxFit.fitHeight)
+                          ? Lottie.asset(
+                              'assets/lottie/loader.json',
+                              repeat: true,
+                              height: 200,
+                              fit: BoxFit.fitHeight,
+                              delegates: LottieDelegates(
+                                values: [
+                                  ValueDelegate.color(
+                                    const ['**'],
+                                    value:
+                                        const Color(EverforestTheme.pineGreen),
+                                  ),
+                                ],
+                              ),
+                            )
                           : Transform.flip(
                               flipY: _isCharging,
-                              child: Lottie.asset(
-                                'assets/lottie/arrows.json',
-                                repeat: true,
-                                height: 200,
-                                fit: BoxFit.fitHeight,
-                              ))),
+                              child: Lottie.asset('assets/lottie/arrows.json',
+                                  repeat: true,
+                                  height: 200,
+                                  fit: BoxFit.fitHeight,
+                                  delegates: LottieDelegates(
+                                    values: [
+                                      ValueDelegate.color(
+                                        const ['**'],
+                                        value: const Color(
+                                            EverforestTheme.pineGreen),
+                                      ),
+                                    ],
+                                  )))),
                   ListView(
                     children: <Widget>[
                       Padding(padding: EdgeInsets.only(top: padding)),

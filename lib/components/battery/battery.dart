@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'package:battery/theme.dart';
 import 'package:flutter/material.dart';
 
 const opacity = 1.0;
 
 const Map<String, Color> colors = {
-  "low": Colors.redAccent,
-  "medium": Colors.orangeAccent,
-  "high": Colors.greenAccent,
+  "low": Color(EverforestTheme.redAccent),
+  "medium": Color(EverforestTheme.yellowAccent),
+  "high": Color(EverforestTheme.greenAccent),
 };
 
 class BatteryWidget extends StatefulWidget {
@@ -160,7 +161,7 @@ class BatteryState extends State<BatteryWidget> with TickerProviderStateMixin {
           color: widget.isEmpty
               ? Colors.black12
               : widget.level < 100
-                  ? Colors.white
+                  ? const Color(EverforestTheme.pineGreen)
                   : colors["high"]!,
         ),
       ),
@@ -170,7 +171,9 @@ class BatteryState extends State<BatteryWidget> with TickerProviderStateMixin {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          color: widget.isEmpty ? Colors.black12 : Colors.white,
+          color: widget.isEmpty
+              ? Colors.black12
+              : const Color(EverforestTheme.pineGreen),
         ),
         child: Stack(alignment: AlignmentDirectional.center, children: <Widget>[
           Column(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -197,7 +200,7 @@ class BatteryState extends State<BatteryWidget> with TickerProviderStateMixin {
           ]),
           Text("${widget.level.toString()}%",
               style: const TextStyle(
-                  color: Colors.black54,
+                  color: Colors.white54,
                   fontSize: 48,
                   fontWeight: FontWeight.bold)),
         ]),
