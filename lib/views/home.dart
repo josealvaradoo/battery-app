@@ -5,11 +5,13 @@ import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
+import 'package:battery/views/login.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/models/battery.dart';
 import 'package:battery/components/battery/battery.dart';
 import 'package:battery/services/battery.service.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:lottie/lottie.dart';
 
@@ -34,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
     final String value = await storage.get("user");
 
     if (value == "" && mounted) {
-      Navigator.pushNamed(context, "/login");
+      Get.off(() => LoginView());
       return;
     }
 
@@ -44,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
     final User? data = await service.login(user.username, decodedPassword);
 
     if (data == null && mounted) {
-      Navigator.pushNamed(context, "/login");
+      Get.off(() => LoginView());
       return;
     }
 
@@ -78,7 +80,10 @@ class _HomeViewState extends State<HomeView> {
   void _onLogout() {
     AuthService service = AuthService();
     service.logout();
-    Navigator.pushNamed(context, "/login");
+    Get.off(() => LoginView(),
+        duration: const Duration(milliseconds: 500),
+        transition: Transition.leftToRightWithFade,
+        curve: Curves.linear.flipped);
   }
 
   void _init() async {
@@ -100,6 +105,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       backgroundColor: const Color(EverforestTheme.deepSlate),
       appBar: AppBar(
+        toolbarHeight: 100,
         backgroundColor: Colors.transparent,
         leading: Container(),
         systemOverlayStyle: const SystemUiOverlayStyle(

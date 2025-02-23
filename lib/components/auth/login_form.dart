@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:battery/components/logo/logo.dart';
 import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
+import 'package:battery/views/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -21,7 +21,10 @@ class _LoginFormState extends State<LoginForm> {
 
   void _onRedirect(BuildContext? context) {
     if (context != null) {
-      Navigator.pushNamed(context, "/");
+      Get.off(() => const HomeView(),
+          transition: Transition.circularReveal,
+          duration: const Duration(seconds: 1),
+          curve: Curves.linear.flipped);
     }
   }
 
