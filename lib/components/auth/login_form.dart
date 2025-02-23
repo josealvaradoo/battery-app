@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
+import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:flutter/material.dart';
 
@@ -61,46 +62,44 @@ class _LoginFormState extends State<LoginForm> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 100),
-            child: Center(
-              child: Image.asset("assets/images/rufus.png"),
-            )),
+        Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            child: CustomInput(
+                controller: _usernameController,
+                error: _errorMessage.isNotEmpty,
+                label: 'Username')),
         const SizedBox(height: 20),
-        TextFormField(
-          controller: _usernameController,
-          decoration: const InputDecoration(
-            labelText: 'Username',
-            border: OutlineInputBorder(),
-          ),
-        ),
+        Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            child: CustomInput(
+                controller: _passwordController,
+                error: _errorMessage.isNotEmpty,
+                obscureText: true,
+                label: 'Password')),
         const SizedBox(height: 20),
-        TextFormField(
-          controller: _passwordController,
-          decoration: const InputDecoration(
-            labelText: 'Password',
-            border: OutlineInputBorder(),
-          ),
-          obscureText: true,
-        ),
         if (_errorMessage.isNotEmpty)
-          Column(children: [
-            const SizedBox(height: 20),
-            Text(
-              _errorMessage,
-              style: const TextStyle(color: Colors.red),
-            )
-          ]),
+          Text(_errorMessage,
+              style: const TextStyle(color: Color(EverforestTheme.redAccent))),
         const SizedBox(height: 20),
         SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 54,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: const Color(EverforestTheme.deepSlate),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(50),
                 ),
               ),
               onPressed: () async {
@@ -114,5 +113,39 @@ class _LoginFormState extends State<LoginForm> {
             )),
       ],
     );
+  }
+}
+
+class CustomInput extends StatelessWidget {
+  final bool error;
+  final String label;
+  final TextEditingController controller;
+  final bool obscureText;
+  const CustomInput(
+      {super.key,
+      required this.error,
+      required this.label,
+      this.obscureText = false,
+      required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+            labelText: 'Password',
+            border: OutlineInputBorder(
+                borderSide: BorderSide(
+              color: error
+                  ? const Color(EverforestTheme.redAccent)
+                  : const Color(EverforestTheme.pineGreen),
+            )),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+              color: error
+                  ? const Color(EverforestTheme.redAccent)
+                  : const Color(EverforestTheme.pineGreen),
+            ))));
   }
 }
