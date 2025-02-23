@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:battery/utils/retry.dart';
 import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
 import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +14,10 @@ class BatteryService {
   // Get the battery value from the server through a GET request.
   Future<Battery> getBatteryLevel() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl));
+      final response = await retry(
+        () => http.get(Uri.parse(apiUrl)),
+        maxAttempts: 3,
+      );
 
       if (response.statusCode != 200) {
         return Battery(level: 0, isCharging: true);
