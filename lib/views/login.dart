@@ -1,8 +1,13 @@
 import 'package:battery/components/auth/login_form.dart';
+import 'package:battery/services/auth.service.dart';
 import 'package:flutter/material.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+  LoginView({super.key}) {
+    // Remove previous user data saved in local storage
+    AuthService auth = AuthService();
+    auth.logout();
+  }
 
   @override
   Widget build(BuildContext context) {

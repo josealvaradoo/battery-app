@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:battery/models/response.dart';
 import 'package:battery/models/user.dart';
+import 'package:battery/utils/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -30,5 +31,10 @@ class AuthService {
     final User user = User.fromJson(data.data);
 
     return user;
+  }
+
+  Future<void> logout() async {
+    final LocalStorage storage = LocalStorage();
+    await storage.deleteAll();
   }
 }

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
+import 'package:battery/utils/localstorage.dart';
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
@@ -24,6 +26,7 @@ class _LoginFormState extends State<LoginForm> {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
     final AuthService service = AuthService();
+    final LocalStorage storage = LocalStorage();
 
     final User? user = await service.login(username, password);
 
@@ -34,6 +37,7 @@ class _LoginFormState extends State<LoginForm> {
       return null;
     }
 
+    await storage.set("user", jsonEncode(user.toJson()));
     return user;
   }
 

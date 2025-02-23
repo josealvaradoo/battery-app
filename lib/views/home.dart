@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:battery/models/user.dart';
+import 'package:battery/services/auth.service.dart';
+import 'package:battery/utils/localstorage.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/models/battery.dart';
 import 'package:battery/components/battery/battery.dart';
@@ -18,9 +22,40 @@ class _HomeViewState extends State<HomeView> {
   bool _isCharging = true;
   bool _isLoading = true;
   int _batteryLevel = 0;
+  bool _isAuthenticated = false;
   BatteryService batteryService = BatteryService();
 
+  Future<void> _validateAuthtentication() async {
+    final LocalStorage storage = LocalStorage();
+    final AuthService service = AuthService();
+
+    final String value = await storage.get("user");
+
+    if (value == "" && mounted) {
+      Navigator.pushNamed(context, "/login");
+      return;
+    }
+
+    final Map<String, dynamic> json = jsonDecode(value);
+    final User user = User.fromJson(json);
+    final String decodedPassword = utf8.decode(base64.decode(user.password));
+    final User? data = await service.login(user.username, decodedPassword);
+
+    if (data == null && mounted) {
+      Navigator.pushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      _isAuthenticated = true;
+    });
+  }
+
   Future<void> _getBatteryLevelHttp() async {
+    if (!_isAuthenticated) {
+      return;
+    }
+
     Battery status = await batteryService.getBatteryLevel();
 
     setState(() {
@@ -38,10 +73,21 @@ class _HomeViewState extends State<HomeView> {
     await _getBatteryLevelHttp();
   }
 
+  void _onLogout() {
+    AuthService service = AuthService();
+    service.logout();
+    Navigator.pushNamed(context, "/login");
+  }
+
+  void _init() async {
+    await _validateAuthtentication();
+    await _getBatteryLevelHttp();
+  }
+
   @override
   void initState() {
     super.initState();
-    _getBatteryLevelHttp();
+    _init();
   }
 
   @override
@@ -50,7 +96,6 @@ class _HomeViewState extends State<HomeView> {
     final double leftPosition = (MediaQuery.of(context).size.width - 200) / 2;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Container(),
         actions: [
@@ -59,7 +104,7 @@ class _HomeViewState extends State<HomeView> {
                 icon: HugeIcons.strokeRoundedLogout02,
                 color: Colors.black,
               ),
-              onPressed: () => Navigator.pop(context)),
+              onPressed: _onLogout),
         ],
       ),
       body: Center(
