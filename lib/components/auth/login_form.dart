@@ -64,8 +64,6 @@ class _LoginFormState extends State<LoginForm> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Logo(),
-        const SizedBox(height: 40),
         Container(
             decoration: const BoxDecoration(
               color: Colors.white,
