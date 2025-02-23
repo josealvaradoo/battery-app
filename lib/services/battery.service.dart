@@ -29,7 +29,6 @@ class BatteryService {
 
       return battery;
     } catch (e) {
-      print("ERROR Getting Battery Level: ${e.toString()}");
       return Battery(level: 0, isCharging: true);
     }
   }
