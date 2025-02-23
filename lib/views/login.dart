@@ -30,7 +30,8 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: SingleChildScrollView(
+      child: Container(
         alignment: Alignment.bottomCenter,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -52,6 +53,6 @@ class _LoginViewState extends State<LoginView> {
                     padding: const EdgeInsets.only(bottom: 30.0),
                     child: Button(onPressed: showDialog))),
       ),
-    );
+    ));
   }
 }
