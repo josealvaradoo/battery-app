@@ -134,7 +134,7 @@ class CustomInput extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
-            labelText: 'Password',
+            labelText: label,
             border: OutlineInputBorder(
                 borderSide: BorderSide(
               color: error
