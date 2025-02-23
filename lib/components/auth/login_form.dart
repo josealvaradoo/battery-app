@@ -11,34 +11,35 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   String _errorMessage = "";
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void _onRedirect(BuildContext? context) {
-    Navigator.pushNamed(context!, "/home");
+    if (context != null) {
+      Navigator.pushNamed(context, "/");
+    }
   }
 
   Future<User?> _onSubmit() async {
-    final String email = _emailController.text;
+    final String username = _usernameController.text;
     final String password = _passwordController.text;
     final AuthService service = AuthService();
 
-    final User? user = await service.login(email, password);
+    final User? user = await service.login(username, password);
 
     if (user == null) {
       setState(() {
-        _errorMessage = "Email o contraseña incorrectos";
+        _errorMessage = "username o contraseña incorrectos";
       });
+      return null;
     }
-
-    print(user);
 
     return user;
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -63,9 +64,9 @@ class _LoginFormState extends State<LoginForm> {
             )),
         const SizedBox(height: 20),
         TextFormField(
-          controller: _emailController,
+          controller: _usernameController,
           decoration: const InputDecoration(
-            labelText: 'Email',
+            labelText: 'Username',
             border: OutlineInputBorder(),
           ),
         ),
