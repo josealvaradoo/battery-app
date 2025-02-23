@@ -62,7 +62,7 @@ class Dialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 2.5,
+      height: MediaQuery.of(context).size.height / 2,
       padding: const EdgeInsets.only(left: padding, right: padding),
       decoration: BoxDecoration(
         color: Colors.white,
