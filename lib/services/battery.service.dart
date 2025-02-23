@@ -15,7 +15,7 @@ class BatteryService {
   Future<Battery> getBatteryLevel() async {
     try {
       final response = await retry(
-        () => http.get(Uri.parse(apiUrl)),
+        () async => await http.get(Uri.parse(apiUrl)),
         maxAttempts: 3,
       );
 

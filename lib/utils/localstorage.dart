@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LocalStorage {
-  static final _instance = LocalStorage._internal();
+  static final LocalStorage _instance = LocalStorage._internal();
   factory LocalStorage() => _instance;
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -31,7 +31,5 @@ class LocalStorage {
 
   IOSOptions _getIOSOptions() => const IOSOptions();
 
-  AndroidOptions _getAndroidOptions() => const AndroidOptions(
-        encryptedSharedPreferences: true,
-      );
+  AndroidOptions _getAndroidOptions() => const AndroidOptions();
 }
