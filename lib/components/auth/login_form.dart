@@ -16,19 +16,18 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   String _errorMessage = "";
+  bool isDisabled = false;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _onRedirect(BuildContext? context) {
-    if (context != null) {
-      Get.off(() => const HomeView(),
-          transition: Transition.circularReveal,
-          duration: const Duration(seconds: 1),
-          curve: Curves.linear.flipped);
-    }
+  void _onRedirect() {
+    Get.off(() => const HomeView(),
+        transition: Transition.circularReveal,
+        duration: const Duration(seconds: 1),
+        curve: Curves.linear.flipped);
   }
 
-  Future<User?> _onSubmit() async {
+  Future<User?> _onAuth() async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
     final AuthService service = AuthService();
@@ -38,13 +37,34 @@ class _LoginFormState extends State<LoginForm> {
 
     if (user == null) {
       setState(() {
+        isDisabled = false;
         _errorMessage = "username o contraseña incorrectos";
       });
       return null;
     }
 
+    setState(() {
+      isDisabled = false;
+    });
     await storage.set("user", jsonEncode(user.toJson()));
     return user;
+  }
+
+  Future<void> _onSubmit() async {
+    if (isDisabled) {
+      return;
+    }
+
+    setState(() {
+      _errorMessage = "";
+      isDisabled = true;
+    });
+
+    final User? user = await _onAuth();
+
+    if (user != null && mounted) {
+      _onRedirect();
+    }
   }
 
   @override
@@ -101,18 +121,15 @@ class _LoginFormState extends State<LoginForm> {
             height: 54,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(EverforestTheme.deepSlate),
+                backgroundColor: isDisabled
+                    ? const Color(EverforestTheme.shadowGray)
+                    : const Color(EverforestTheme.deepSlate),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              onPressed: () async {
-                final User? user = await _onSubmit();
-                if (user != null && mounted) {
-                  _onRedirect(mounted ? context : null);
-                }
-              },
+              onPressed: _onSubmit,
               child: const Text('Ingresar',
                   style: TextStyle(color: Colors.white, fontSize: 16)),
             )),
