@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:battery/components/wrapper/lifecycle_handler.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
@@ -97,61 +98,48 @@ class _HomeViewState extends State<HomeView> {
     final double padding = (MediaQuery.of(context).size.height - 650) / 2;
     final double leftPosition = (MediaQuery.of(context).size.width - 200) / 2;
 
-    return Scaffold(
-      backgroundColor: const Color(EverforestTheme.deepSlate),
-      appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: Colors.transparent,
-        leading: Container(),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.black,
-          statusBarBrightness: Brightness.light,
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            decoration: BoxDecoration(
-              color: const Color(EverforestTheme.pineGreen),
-              borderRadius: BorderRadius.circular(100),
+    return AppLifecycleHandler(
+        onResumed: () {
+          _onRefresh();
+        },
+        child: Scaffold(
+          backgroundColor: const Color(EverforestTheme.deepSlate),
+          appBar: AppBar(
+            toolbarHeight: 100,
+            backgroundColor: Colors.transparent,
+            leading: Container(),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.black,
+              statusBarBrightness: Brightness.light,
             ),
-            child: IconButton(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedLogout02,
-                  color: Colors.white,
+            actions: [
+              Container(
+                margin: const EdgeInsets.only(right: 16.0),
+                decoration: BoxDecoration(
+                  color: const Color(EverforestTheme.pineGreen),
+                  borderRadius: BorderRadius.circular(100),
                 ),
-                onPressed: _onLogout),
-          )
-        ],
-      ),
-      body: Center(
-          child: RefreshIndicator(
-              onRefresh: _onRefresh,
-              child: Stack(
-                children: _isAuthenticated
-                    ? <Widget>[
-                        Positioned(
-                            bottom: 50,
-                            left: leftPosition,
-                            child: _isLoading
-                                ? Lottie.asset(
-                                    'assets/lottie/loader.json',
-                                    repeat: true,
-                                    height: 200,
-                                    fit: BoxFit.fitHeight,
-                                    delegates: LottieDelegates(
-                                      values: [
-                                        ValueDelegate.color(
-                                          const ['**'],
-                                          value: const Color(
-                                              EverforestTheme.pineGreen),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Transform.flip(
-                                    flipY: _isCharging,
-                                    child: Lottie.asset(
-                                        'assets/lottie/arrows.json',
+                child: IconButton(
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedLogout02,
+                      color: Colors.white,
+                    ),
+                    onPressed: _onLogout),
+              )
+            ],
+          ),
+          body: Center(
+              child: RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: Stack(
+                    children: _isAuthenticated
+                        ? <Widget>[
+                            Positioned(
+                                bottom: 50,
+                                left: leftPosition,
+                                child: _isLoading
+                                    ? Lottie.asset(
+                                        'assets/lottie/loader.json',
                                         repeat: true,
                                         height: 200,
                                         fit: BoxFit.fitHeight,
@@ -163,16 +151,34 @@ class _HomeViewState extends State<HomeView> {
                                                   EverforestTheme.pineGreen),
                                             ),
                                           ],
-                                        )))),
-                        ListView(
-                          children: <Widget>[
-                            Padding(padding: EdgeInsets.only(top: padding)),
-                            BatteryWidget(level: _batteryLevel),
-                          ],
-                        ),
-                      ]
-                    : [],
-              ))),
-    );
+                                        ),
+                                      )
+                                    : Transform.flip(
+                                        flipY: _isCharging,
+                                        child: Lottie.asset(
+                                            'assets/lottie/arrows.json',
+                                            repeat: true,
+                                            height: 200,
+                                            fit: BoxFit.fitHeight,
+                                            delegates: LottieDelegates(
+                                              values: [
+                                                ValueDelegate.color(
+                                                  const ['**'],
+                                                  value: const Color(
+                                                      EverforestTheme
+                                                          .pineGreen),
+                                                ),
+                                              ],
+                                            )))),
+                            ListView(
+                              children: <Widget>[
+                                Padding(padding: EdgeInsets.only(top: padding)),
+                                BatteryWidget(level: _batteryLevel),
+                              ],
+                            ),
+                          ]
+                        : [],
+                  ))),
+        ));
   }
 }
