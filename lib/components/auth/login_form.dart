@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:battery/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -27,15 +26,15 @@ class _LoginFormState extends State<LoginForm> {
         curve: Curves.linear.flipped);
   }
 
-  Future<User?> _onAuth() async {
+  Future<String?> _onAuth() async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
     final AuthService service = AuthService();
     final LocalStorage storage = LocalStorage();
 
-    final User? user = await service.login(username, password);
+    final String? token = await service.login(username, password);
 
-    if (user == null) {
+    if (token == null) {
       setState(() {
         isDisabled = false;
         _errorMessage = "username o contraseña incorrectos";
@@ -46,8 +45,8 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       isDisabled = false;
     });
-    await storage.set("user", jsonEncode(user.toJson()));
-    return user;
+    await storage.set("token", token);
+    return token;
   }
 
   Future<void> _onSubmit() async {
@@ -60,9 +59,9 @@ class _LoginFormState extends State<LoginForm> {
       isDisabled = true;
     });
 
-    final User? user = await _onAuth();
+    final String? token = await _onAuth();
 
-    if (user != null && mounted) {
+    if (token != null && mounted) {
       _onRedirect();
     }
   }
@@ -130,8 +129,23 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               onPressed: _onSubmit,
-              child: const Text('Ingresar',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: !isDisabled
+                  ? const Text('Ingresar',
+                      style: TextStyle(color: Colors.white, fontSize: 16))
+                  : Lottie.asset(
+                      'assets/lottie/loader.json',
+                      repeat: true,
+                      height: 50,
+                      fit: BoxFit.fitHeight,
+                      delegates: LottieDelegates(
+                        values: [
+                          ValueDelegate.color(
+                            const ['**'],
+                            value: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
             )),
       ],
     );

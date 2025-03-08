@@ -1,15 +1,12 @@
 import 'dart:convert';
 
-import 'package:battery/models/response.dart';
-import 'package:battery/models/user.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
-  String apiUrl = "${dotenv.env['API_URL']!}/auth";
+  String apiUrl = "https://growatt-scrapping-production.up.railway.app/auth";
 
-  Future<User?> login(String username, String password) async {
+  Future<String?> login(String username, String password) async {
     final Map<String, String> headers = {"Content-Type": "application/json"};
     final Map<String, String> body = {
       "username": username,
@@ -27,10 +24,23 @@ class AuthService {
     }
 
     final json = jsonDecode(response.body);
-    final data = Response.fromJson(json);
-    final User user = User.fromJson(data.data);
 
-    return user;
+    return json["token"];
+  }
+
+  Future<bool> verify(String token) async {
+    final Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    };
+    final url = Uri.parse("$apiUrl/verify");
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode != 200) {
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> logout() async {

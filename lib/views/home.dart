@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:battery/models/user.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
@@ -33,19 +31,16 @@ class _HomeViewState extends State<HomeView> {
     final LocalStorage storage = LocalStorage();
     final AuthService service = AuthService();
 
-    final String value = await storage.get("user");
+    final String token = await storage.get("token");
 
-    if (value == "" && mounted) {
+    if (token == "" && mounted) {
       Get.off(() => LoginView());
       return;
     }
 
-    final Map<String, dynamic> json = jsonDecode(value);
-    final User user = User.fromJson(json);
-    final String decodedPassword = utf8.decode(base64.decode(user.password));
-    final User? data = await service.login(user.username, decodedPassword);
+    final bool isVerified = await service.verify(token);
 
-    if (data == null && mounted) {
+    if (!isVerified && mounted) {
       Get.off(() => LoginView());
       return;
     }
@@ -99,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final double padding = (MediaQuery.of(context).size.height - 500) / 2;
+    final double padding = (MediaQuery.of(context).size.height - 650) / 2;
     final double leftPosition = (MediaQuery.of(context).size.width - 200) / 2;
 
     return Scaffold(
@@ -132,48 +127,51 @@ class _HomeViewState extends State<HomeView> {
           child: RefreshIndicator(
               onRefresh: _onRefresh,
               child: Stack(
-                children: <Widget>[
-                  Positioned(
-                      bottom: 50,
-                      left: leftPosition,
-                      child: _isLoading
-                          ? Lottie.asset(
-                              'assets/lottie/loader.json',
-                              repeat: true,
-                              height: 200,
-                              fit: BoxFit.fitHeight,
-                              delegates: LottieDelegates(
-                                values: [
-                                  ValueDelegate.color(
-                                    const ['**'],
-                                    value:
-                                        const Color(EverforestTheme.pineGreen),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Transform.flip(
-                              flipY: _isCharging,
-                              child: Lottie.asset('assets/lottie/arrows.json',
-                                  repeat: true,
-                                  height: 200,
-                                  fit: BoxFit.fitHeight,
-                                  delegates: LottieDelegates(
-                                    values: [
-                                      ValueDelegate.color(
-                                        const ['**'],
-                                        value: const Color(
-                                            EverforestTheme.pineGreen),
-                                      ),
-                                    ],
-                                  )))),
-                  ListView(
-                    children: <Widget>[
-                      Padding(padding: EdgeInsets.only(top: padding)),
-                      BatteryWidget(level: _batteryLevel),
-                    ],
-                  ),
-                ],
+                children: _isAuthenticated
+                    ? <Widget>[
+                        Positioned(
+                            bottom: 50,
+                            left: leftPosition,
+                            child: _isLoading
+                                ? Lottie.asset(
+                                    'assets/lottie/loader.json',
+                                    repeat: true,
+                                    height: 200,
+                                    fit: BoxFit.fitHeight,
+                                    delegates: LottieDelegates(
+                                      values: [
+                                        ValueDelegate.color(
+                                          const ['**'],
+                                          value: const Color(
+                                              EverforestTheme.pineGreen),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Transform.flip(
+                                    flipY: _isCharging,
+                                    child: Lottie.asset(
+                                        'assets/lottie/arrows.json',
+                                        repeat: true,
+                                        height: 200,
+                                        fit: BoxFit.fitHeight,
+                                        delegates: LottieDelegates(
+                                          values: [
+                                            ValueDelegate.color(
+                                              const ['**'],
+                                              value: const Color(
+                                                  EverforestTheme.pineGreen),
+                                            ),
+                                          ],
+                                        )))),
+                        ListView(
+                          children: <Widget>[
+                            Padding(padding: EdgeInsets.only(top: padding)),
+                            BatteryWidget(level: _batteryLevel),
+                          ],
+                        ),
+                      ]
+                    : [],
               ))),
     );
   }

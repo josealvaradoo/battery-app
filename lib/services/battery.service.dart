@@ -1,21 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:battery/utils/localstorage.dart';
 import 'package:battery/utils/retry.dart';
 import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
 import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:http/http.dart' as http;
 import 'package:battery/models/response.dart';
 import 'package:battery/models/battery.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BatteryService {
-  String apiUrl = "${dotenv.env['API_URL']!}/status";
+  String apiUrl = "https://growatt-scrapping-production.up.railway.app/status";
 
   // Get the battery value from the server through a GET request.
   Future<Battery> getBatteryLevel() async {
     try {
+      final LocalStorage storage = LocalStorage();
+      final String token = await storage.get("token");
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      };
       final response = await retry(
-        () async => await http.get(Uri.parse(apiUrl)),
+        () async => await http.get(Uri.parse(apiUrl), headers: headers),
         maxAttempts: 3,
       );
 
