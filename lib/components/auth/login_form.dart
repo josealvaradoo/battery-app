@@ -1,10 +1,11 @@
+import 'package:battery/components/auth/input.dart';
+import 'package:battery/components/auth/signin_button.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:battery/theme.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:battery/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -32,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
     final AuthService service = AuthService();
     final LocalStorage storage = LocalStorage();
 
-    final String? token = await service.login(username, password);
+    final String? token = await service.signIn(username, password);
 
     if (token == null) {
       setState(() {
@@ -59,9 +60,7 @@ class _LoginFormState extends State<LoginForm> {
       isDisabled = true;
     });
 
-    final String? token = await _onAuth();
-
-    if (token != null && mounted) {
+    if (await _onAuth() != null && mounted) {
       _onRedirect();
     }
   }
@@ -115,73 +114,11 @@ class _LoginFormState extends State<LoginForm> {
           Text(_errorMessage,
               style: const TextStyle(color: Color(EverforestTheme.redAccent))),
         const SizedBox(height: 20),
-        SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDisabled
-                    ? const Color(EverforestTheme.shadowGray)
-                    : const Color(EverforestTheme.deepSlate),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-              onPressed: _onSubmit,
-              child: !isDisabled
-                  ? const Text('Ingresar',
-                      style: TextStyle(color: Colors.white, fontSize: 16))
-                  : Lottie.asset(
-                      'assets/lottie/loader.json',
-                      repeat: true,
-                      height: 50,
-                      fit: BoxFit.fitHeight,
-                      delegates: LottieDelegates(
-                        values: [
-                          ValueDelegate.color(
-                            const ['**'],
-                            value: Colors.grey,
-                          ),
-                        ],
-                      ),
-                    ),
-            )),
+        SignInButton(
+          isDisabled: isDisabled,
+          onPressed: _onSubmit,
+        ),
       ],
     );
-  }
-}
-
-class CustomInput extends StatelessWidget {
-  final bool error;
-  final String label;
-  final TextEditingController controller;
-  final bool obscureText;
-  const CustomInput(
-      {super.key,
-      required this.error,
-      required this.label,
-      this.obscureText = false,
-      required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(
-                borderSide: BorderSide(
-              color: error
-                  ? const Color(EverforestTheme.redAccent)
-                  : const Color(EverforestTheme.pineGreen),
-            )),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-              color: error
-                  ? const Color(EverforestTheme.redAccent)
-                  : const Color(EverforestTheme.pineGreen),
-            ))));
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:battery/constants.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:battery/utils/retry.dart';
 import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
@@ -9,7 +10,7 @@ import 'package:battery/models/response.dart';
 import 'package:battery/models/battery.dart';
 
 class BatteryService {
-  String apiUrl = "https://growatt-scrapping-production.up.railway.app/status";
+  String url = "$apiUrl/status";
 
   // Get the battery value from the server through a GET request.
   Future<Battery> getBatteryLevel() async {
@@ -21,7 +22,7 @@ class BatteryService {
         "Authorization": "Bearer $token"
       };
       final response = await retry(
-        () async => await http.get(Uri.parse(apiUrl), headers: headers),
+        () async => await http.get(Uri.parse(url), headers: headers),
         maxAttempts: 3,
       );
 
@@ -47,7 +48,7 @@ class BatteryService {
     // Suibscribe to a Server Side Event stream and listen for events
     SSEClient.subscribeToSSE(
         method: SSERequestType.GET,
-        url: "$apiUrl/stream",
+        url: "$url/stream",
         header: {
           "Accept": "text/event-stream",
           "Cache-Control": "no-cache",

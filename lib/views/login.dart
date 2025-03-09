@@ -1,3 +1,4 @@
+import 'package:battery/components/auth/google_button.dart';
 import 'package:battery/components/auth/login_dialog.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +51,34 @@ class _LoginViewState extends State<LoginView> {
             child: _isOpen
                 ? const AnimatedDialog()
                 : Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0),
-                    child: Button(onPressed: showDialog))),
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const GoogleAuthButton(),
+                          const SizedBox(height: 10),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 1,
+                                  color: Colors.white,
+                                ),
+                                const Text("o",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white)),
+                                Container(
+                                  width: 100,
+                                  height: 1,
+                                  color: Colors.white,
+                                ),
+                              ]),
+                          const SizedBox(height: 10),
+                          Button(onPressed: showDialog)
+                        ]))),
       ),
     ));
   }

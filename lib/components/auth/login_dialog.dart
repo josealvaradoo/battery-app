@@ -2,6 +2,7 @@ import 'package:battery/components/auth/login_form.dart';
 import 'package:battery/components/logo/logo.dart';
 import 'package:battery/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 const double padding = 16.0;
 
@@ -93,9 +94,8 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(padding),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
@@ -107,7 +107,13 @@ class Button extends StatelessWidget {
             elevation: 0,
           ),
           onPressed: onPressed,
-          child: const Text('Ingresar', style: TextStyle(fontSize: 16)),
+          child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                Icon(HugeIcons.strokeRoundedMail01, color: Colors.black),
+                Text('Continuar con Email', style: TextStyle(fontSize: 16))
+              ]),
         ));
   }
 }

@@ -39,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
       return;
     }
 
-    final bool isVerified = await service.verify(token);
+    final bool isVerified = await service.checkAuth(token);
 
     if (!isVerified && mounted) {
       Get.off(() => LoginView());
