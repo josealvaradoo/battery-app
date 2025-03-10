@@ -9,7 +9,6 @@ Future<T> retry<T>(
       attempts++;
       return await action();
     } catch (e) {
-      print("Retrying in $delay seconds...");
       if (attempts >= maxAttempts) {
         rethrow; // Propagate the error after max retries
       }
