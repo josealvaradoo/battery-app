@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:battery/constants.dart';
+import 'package:battery/models/user.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,17 +31,11 @@ class AuthService {
   }
 
   Future<String?> signInWithGoogle(String idToken) async {
-    print(Uri.parse("$url/google"));
-
-    print(idToken);
-
     final response = await http.post(
       Uri.parse("$url/google"),
       headers: headers,
       body: jsonEncode({'token': idToken}),
     );
-
-    print(response.statusCode);
 
     if (response.statusCode != 200) {
       return null;
@@ -63,6 +58,19 @@ class AuthService {
     }
 
     return true;
+  }
+
+  Future<User> getProfile() async {
+    final LocalStorage storage = LocalStorage();
+    final Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer ${await storage.get("token")}"
+    };
+    final response =
+        await http.get(Uri.parse("$url/profile"), headers: headers);
+    final json = jsonDecode(response.body);
+
+    return User.fromJson(json["data"]);
   }
 
   Future<void> logout() async {
