@@ -28,6 +28,27 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+  <key>CLIENT_ID</key>
+	<string>$(GOOGLE_CLIENT_ID)</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>$(REVERSED_CLIENT_ID)</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.home.watt</string>
+  <key>GIDClientID</key>
+  <string>$(GOOGLE_CLIENT_ID)</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>$(REVERSED_CLIENT_ID)</string>
+      </array>
+    </dict>
+  </array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
