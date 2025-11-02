@@ -1,15 +1,20 @@
-import 'package:battery/services/auth.service.dart';
 import 'package:battery/services/google_auth.service.dart';
+import 'package:battery/utils/dialog_utils.dart';
 import 'package:battery/utils/localstorage.dart';
 import 'package:battery/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class GoogleAuthButton extends StatelessWidget {
+class GoogleAuthButton extends StatefulWidget {
   const GoogleAuthButton({
     super.key,
   });
 
+  @override
+  State<GoogleAuthButton> createState() => _GoogleAuthButtonState();
+}
+
+class _GoogleAuthButtonState extends State<GoogleAuthButton> {
   void _onRedirect() {
     Get.off(() => const HomeView(),
         transition: Transition.circularReveal,
@@ -23,6 +28,11 @@ class GoogleAuthButton extends StatelessWidget {
     final String? token = await googleAuthService.signIn();
 
     if (token == null) {
+      if (!mounted) return;
+
+      showPlatformDialog(context, 'Autenticación fallida',
+          'Tu cuenta no está autorizada para acceder.');
+
       return;
     }
 

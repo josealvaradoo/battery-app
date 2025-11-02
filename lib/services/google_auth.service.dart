@@ -25,7 +25,6 @@ class GoogleAuthService {
 
       return service.signInWithGoogle(idToken);
     } catch (error) {
-      print("Error: $error");
       return null;
     }
   }
