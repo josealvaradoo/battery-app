@@ -1,9 +1,11 @@
+import 'package:battery/constants.dart';
 import 'package:battery/services/auth.service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email'],
+    serverClientId: googleServerClientId,
   );
 
   Future<String?> signIn() async {
